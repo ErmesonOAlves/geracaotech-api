@@ -1,7 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../config/connection.js'
-class Users extends Model { }
-Users.init({
+class User extends Model { }
+User.init({
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -24,20 +24,20 @@ Users.init({
         }
     },
     password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-        len: [8, 100] 
-    }
+        type: DataTypes.TEXT,
+        allowNull: false
     }
 },
     {
         sequelize,
-        modelName: 'Users',
-        tableName: 'users',
+        modelName: 'User',
+        tableName: 'user',
         timestamps: true,
-        underscored: true
+        underscored: true,
+        defaultScope: {
+        attributes: { exclude: ['password'] }
+    }
     }
 )
 
-export default Users
+export default User
