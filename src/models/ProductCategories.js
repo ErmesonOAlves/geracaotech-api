@@ -1,6 +1,6 @@
 import sequelize from '../config/connection.js'
 import {DataTypes,Model} from 'sequelize'
-import Categories from './Categories.js'
+import Category from './Category.js'
 import Product from './Product.js'
 class ProductCategories extends Model{}
 
@@ -17,7 +17,7 @@ ProductCategories.init({
         type:DataTypes.INTEGER,
         allowNull:false,
         references:{
-            model:Categories,
+            model:Category,
             key:'id'
         }
     }

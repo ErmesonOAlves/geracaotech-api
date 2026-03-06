@@ -1,7 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../config/connection.js';
-class Categories extends Model { }
-Categories.init({
+class Category extends Model { }
+Category.init({
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -22,11 +22,11 @@ Categories.init({
 },
     {
         sequelize,
-        modelName: 'Categories',
-        tableName: 'categories',
+        modelName: 'Category',
+        tableName: 'category',
         timestamps: true,
         underscored: true
     }
 )
 
-export default Categories
+export default Category

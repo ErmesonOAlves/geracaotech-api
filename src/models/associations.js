@@ -1,5 +1,5 @@
 import Product from './Product.js'
-import Categories from './Categories.js'
+import Category from './Category.js'
 import ProductCategories from './ProductCategories.js'
 import ProductImages from './ProductImages.js'
 import ProductOptions from './ProductOptions.js'
@@ -24,18 +24,18 @@ ProductOptions.belongsTo(Product,{
     as:'product'
 })
 
-Product.belongsToMany(Categories,{
+Product.belongsToMany(Category,{
     through: ProductCategories,
     foreignKey: 'product_id',
     otherKey: 'category_id',
-    as: 'categories'
+    as: 'category'
 })
 
-Categories.belongsToMany(Product,{
+Category.belongsToMany(Product,{
     through: ProductCategories,
     foreignKey: 'category_id',
     otherKey: 'product_id',
     as: 'products'
 })
 
-export{User, Categories,Product,ProductImages,ProductOptions}
+export{User, Category,Product,ProductImages,ProductOptions}

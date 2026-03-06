@@ -1,6 +1,6 @@
 import sequelize from '../config/connection.js';
 import User from '../models/User.js';
-import Categories from '../models/Categories.js';
+import Category from '../models/Category.js';
 import Product from '../models/Product.js'
 import ProductImages from '../models/ProductImages.js'
 import ProductOptions from '../models/ProductOptions.js'
