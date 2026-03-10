@@ -1,4 +1,5 @@
 import Category from '../models/Category.js'
+import {Op} from 'sequelize'
 export const search = async (req, res) => {
   try {
 
@@ -50,6 +51,11 @@ export const search = async (req, res) => {
 export const getById = async (req, res) => {
   try {
     const { id } = req.params;
+     if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
+            return res.status(400).json({
+                message: "Invalid ID"
+            })
+        }
     const category = await Category.findByPk(id, {
       attributes: ['id', 'name', 'slug', 'use_in_menu']
     })
@@ -60,7 +66,9 @@ export const getById = async (req, res) => {
     }
     return res.status(200).json(category)
   } catch (error) {
-
+    return res.status(500).json({
+      message:`server internal error`
+    })
   }
 }
 
@@ -72,10 +80,23 @@ export const create = async (req, res) => {
         message: "name and slug are required"
       })
     }
+    if (name.trim().length < 2 || slug.trim().length < 2) {
+                return res.status(400).json({
+                    message: "name and slug must be at least 2 characters"
+                })
+            }
+            const existingCategory = await Category.findOne({
+              where:{[Op.or]:[{name},{slug}]}
+            })
+            if (existingCategory) {
+                return res.status(409).json({
+                    message: "Category name or slug already exists"
+                })
+            }
 
     const category = await Category.create({
-      name,
-      slug,
+      name:name.trim(),
+      slug:slug.trim(),
       use_in_menu
     })
 
@@ -111,8 +132,14 @@ export const update = async (req, res) => {
 export const remove = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
+      return res.status(400).json({
+        message: "Invalid ID"
+      })
+    }
     const deleted = await Category.destroy({
-      where: {id: id}
+      where: { id: id }
     })
     if (!deleted) {
       return res.status(404).json({
@@ -122,8 +149,7 @@ export const remove = async (req, res) => {
     return res.status(204).send()
   } catch (error) {
     return res.status(500).json({
-      message: 'Internal server error',
-      error: error.message
+      message: 'Internal server error'
     })
   }
 }
