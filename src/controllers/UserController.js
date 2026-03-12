@@ -3,30 +3,30 @@ import jwt from 'jsonwebtoken'
 import User from '../models/User.js'
 import { hashPassword, verifyPassword } from '../config/password.js'
 import validator from 'validator'
-export const search = async(req,res)=>{
+export const search = async (req, res) => {
     try {
-        
+
         let { limit = 12, page = 1 } = req.query;
         limit = parseInt(limit);
         page = parseInt(page);
         const options = {
-            attributes:['firstname','surname','email'],
-            order:[['id','ASC']]
+            attributes: ['firstname', 'surname', 'email'],
+            order: [['id', 'ASC']]
         };
         if (limit !== -1) {
             options.limit = limit;
             options.offset = (page - 1) * limit;
         }
-        
+
         const { count, rows } = await User.findAndCountAll(options);
         return res.status(200).json({
-            data:rows,
-            total:count,
-            limit:limit,
-            page:page
+            data: rows,
+            total: count,
+            limit: limit,
+            page: page
         })
     } catch (error) {
-        return res.status(500).json({message:'There was an error try again'})
+        return res.status(500).json({ message: 'There was an error try again' })
     }
 }
 export const getById = async (req, res) => {
@@ -57,10 +57,11 @@ export const getById = async (req, res) => {
 export const create = async (req, res) => {
     try {
         const { firstname, surname, email, password, confirmpassword } = req.body
-        if(email){
-            if(!validator.isEmail(email)){
+        if (email) {
+            if (!validator.isEmail(email)) {
                 return res.status(400).json({
-                    message:'invalid email format'})
+                    message: 'invalid email format'
+                })
             }
         }
 
@@ -88,9 +89,9 @@ export const create = async (req, res) => {
 
         const hashedPassword = await hashPassword(password)
         const user = await User.create({
-            firstname:firstname.trim(),
-            surname:surname.trim(),
-            email:email.toLowerCase().trim(),
+            firstname: firstname.trim(),
+            surname: surname.trim(),
+            email: email.toLowerCase().trim(),
             password: hashedPassword
         })
         return res.status(201).json({
@@ -105,8 +106,9 @@ export const create = async (req, res) => {
     } catch (error) {
         return res.status(400).json({
             message: `Error creating user: ${error.message}`
-        })}
+        })
     }
+}
 export const update = async (req, res) => {
     try {
         const { id } = req.params;
@@ -137,20 +139,20 @@ export const update = async (req, res) => {
         }
 
         if (email) {
-            if(!validator.isEmail(email)){
+            if (!validator.isEmail(email)) {
                 return res.status(400).json({
-                    message:'invalid email format'
+                    message: 'invalid email format'
                 })
             }
-            }
+        }
 
-            const existingUser = await User.findOne({ where: { email } })
-            if (existingUser && existingUser.id !== Number(id)) {
-                return res.status(409).json({
-                    message: "Email already exists"
-                })
-            }
-        
+        const existingUser = await User.findOne({ where: { email } })
+        if (existingUser && existingUser.id !== Number(id)) {
+            return res.status(409).json({
+                message: "Email already exists"
+            })
+        }
+
 
         const updateData = {}
         if (firstname) updateData.firstname = firstname.trim()
@@ -177,7 +179,7 @@ export const remove = async (req, res) => {
     try {
         const { id } = req.params;
 
-        if (!Number.isInteger(Number(id))||Number(id)<=0) {
+        if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
             return res.status(400).json({
                 message: "Invalid ID"
             })
@@ -200,48 +202,49 @@ export const remove = async (req, res) => {
     }
 }
 
-export const login = async(req,res)=>{
+export const login = async (req, res) => {
     try {
-        const {email,password} = req.body
-        if(email){
-            if(!validator.isEmail(email)){
+        const { email, password } = req.body
+        if (!email || !password) {
+            return res.status(400).json({
+                message: "Email and password are required"
+            })
+        }
+        if (email) {
+            if (!validator.isEmail(email)) {
                 return res.status(400).json({
-                    message:'invalid email format'
+                    message: 'Invalid email format'
                 })
             }
         }
-        if(!email||!password){
-            return res.status(400).json({
-                message:"Email and password are required"
-            })
-        }
+
         const user = await User.findOne({
             where:
-                {email:email.toLowerCase().trim()},
-                 attributes: ['id', 'email', 'password']
+                { email: email.toLowerCase().trim() },
+            attributes: ['id', 'email', 'password']
         })
-        if(!user){
+        if (!user) {
             return res.status(401).json({
-                message:"Invalid credentials"
+                message: "Invalid credentials"
             })
         }
         const secret = process.env.JWT_SECRET;
         if (!secret) {
             console.error("ERRO CRÍTICO: JWT_SECRET não definido no arquivo .env");
-            return res.status(500).json({ 
-                message: "Internal server error" 
+            return res.status(500).json({
+                message: "Internal server error"
             });
         }
         const isPasswordValid = await verifyPassword(password, user.password)
-        if(!isPasswordValid){
+        if (!isPasswordValid) {
             return res.status(401).json({
-                message:"Invalid credentials"
+                message: "Invalid credentials"
             })
         }
         const token = jwt.sign(
-            {id:user.id,email:user.email},
+            { id: user.id, email: user.email },
             secret,
-            {expiresIn:"15m"}
+            { expiresIn: "15m" }
         )
         return res.status(200).json({
             token
@@ -250,9 +253,9 @@ export const login = async(req,res)=>{
 
     } catch (error) {
         return res.status(500).json({
-            message:"Internal server error",
-            error:error.message
+            message: "Internal server error",
+            error: error.message
         })
-        
+
     }
 }
