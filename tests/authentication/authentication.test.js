@@ -1,24 +1,3 @@
-/*Sim, você deve testar a rota de login. É uma rota crítica porque:
-
-Valida credenciais (email/senha)
-
-Gera tokens JWT (autenticação de toda API)
-
-Tem vários cenários de erro (credenciais inválidas, campos faltando, email inválido)
-
-Testes importantes:
-
-Login com sucesso (retorna token) ok
-
-Falha com email inexistente ok
-
-Falha com senha incorreta ok
-
-Falha sem email ou senha ok
-
-Falha com formato de email inválido ok
-
-É uma das rotas mais importantes para ter cobertura de testes. */
 
 import User from '../../src/models/User.js'
 import request from 'supertest'
