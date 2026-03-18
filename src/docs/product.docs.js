@@ -119,3 +119,27 @@
      *       500:
      *         description: Internal server error
      */
+/**
+     * @swagger
+     * /v1/product:
+     *   delete:
+     *     summary: Deleta um produto
+     *     tags: [Product]
+     *     security: []
+     *     parameters:
+     *       - in: query
+     *         name: id
+     *         required: true
+     *         schema:
+     *           type: integer
+     *         description: ID do produto a ser deletado
+     *     responses:
+     *       204:
+     *         description: Produto deletado com sucesso
+     *       400:
+     *         description: Invalid ID
+     *       404:
+     *         description: Product not found
+     *       500:
+     *         description: Internal server error
+     */
